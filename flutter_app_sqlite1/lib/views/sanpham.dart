@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_sqlite1/provider/sanpham_provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 
 enum SanPhamMode{
@@ -20,11 +21,13 @@ class _SanPhamState extends State<SanPham> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
+  final TextEditingController _imageController = TextEditingController();
 
   @override
   void didChangeDependencies() {
     if(widget.sanPhamMode == SanPhamMode.Editing){_titleController.text = widget.sanpham['title'];
-    _textController.text =  widget.sanpham['text'];}
+    _textController.text =  widget.sanpham['text'];
+    _imageController.text =  widget.sanpham['image'];}
     super.didChangeDependencies();
   }
 
@@ -56,6 +59,13 @@ class _SanPhamState extends State<SanPham> {
               ),
             ),
             Padding(padding: EdgeInsets.all(20.0)),
+            TextField(
+              controller: _imageController,
+              decoration: InputDecoration(
+                hintText: "Địa chỉ hình ảnh",
+              ),
+            ),
+            Padding(padding: EdgeInsets.all(20.0)),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -63,19 +73,69 @@ class _SanPhamState extends State<SanPham> {
                   onTap: (){
                     final title = _titleController.text;
                     final text = _textController.text;
+                    final image = _imageController.text;
                     if (widget?.sanPhamMode == SanPhamMode.Adding){
-                      SanphamProvider.insertSanpham({
-                        'title' : title,
-                        'text': text,
-                      });
+                      if(title.length>0 && text.length>0 && image.length>0){
+                        Fluttertoast.showToast(
+                            msg: "Thêm dữ liệu thành công",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.lightGreenAccent,
+                            textColor: Colors.white,
+                            fontSize: 16.0
+                        );
+                        SanphamProvider.insertSanpham({
+                          'title' : title,
+                          'text': text,
+                          'image': image,
+                        });
+                        Navigator.pop(context);}else
+                      {
+                        Fluttertoast.showToast(
+                            msg: "Vui lòng điền đầy đủ dữ liệu",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0
+                        );
+                        Navigator.canPop(context);
+                      }
                     }else if(widget?.sanPhamMode == SanPhamMode.Editing){
-                      SanphamProvider.updateSanpham({
-                        'id' : widget.sanpham['id'],
-                        'title' : title,
-                        'text': text,
-                      });
+                      if(title.length>0 && text.length>0 && image.length>0 ){
+                        Fluttertoast.showToast(
+                            msg: "Sửa dữ liệu thành công",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.lightGreenAccent,
+                            textColor: Colors.white,
+                            fontSize: 16.0
+                        );
+                        SanphamProvider.updateSanpham({
+                          'id' : widget.sanpham['id'],
+                          'title' : title,
+                          'text': text,
+                          'image': image,
+                        });
+                        Navigator.pop(context);
+                      }else{
+                        Fluttertoast.showToast(
+                            msg: "Vui lòng điền đầy đủ dữ liệu",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0
+                        );
+                        Navigator.canPop(context);
+                      }
+
                     }
-                    Navigator.pop(context);
+
                   },
                   child: Container(
                     alignment: Alignment.center,

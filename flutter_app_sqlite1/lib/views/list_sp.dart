@@ -18,13 +18,13 @@ class _ListSpState extends State<ListSp> {
     // TODO: implement build
     return Scaffold(
       body: FutureBuilder(future: SanphamProvider.getSanphamList(),
-      builder: (context,snapshot){
-        if (snapshot.connectionState == ConnectionState.done){
-          final sanpham = snapshot.data;
-          return ListView.builder(
-              itemCount: sanpham.length,
-              itemBuilder: (context,index){
-                return Container(
+        builder: (context,snapshot){
+          if (snapshot.connectionState == ConnectionState.done){
+            final sanpham = snapshot.data;
+            return ListView.builder(
+                itemCount: sanpham.length,
+                itemBuilder: (context,index){
+                  return Container(
 
                     child: Slidable(
                       actionPane: SlidableDrawerActionPane(),
@@ -60,7 +60,7 @@ class _ListSpState extends State<ListSp> {
                       key: ObjectKey(snapshot),
 
                       child: Container(
-                        width: MediaQuery.of(context).size.width,
+                          width: MediaQuery.of(context).size.width,
                           height: 120.0,
                           padding: EdgeInsets.all(10.0),
                           margin: EdgeInsets.all(5),
@@ -68,24 +68,36 @@ class _ListSpState extends State<ListSp> {
                               borderRadius: BorderRadius.circular(10.0),color: Colors.grey[300]
                           ),
 
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
-                              TextSp1(sanpham[index]['title']),
-                              Padding(padding: EdgeInsets.all(10.0)),
-                              TextSp2(sanpham[index]['text'])
+                              Container(
+                                width: 100.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    image: DecorationImage(image: NetworkImage(sanpham[index]['image'],),fit: BoxFit.fill)
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.all(6.0)),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TextSp1(sanpham[index]['title']),
+                                  Padding(padding: EdgeInsets.all(5.0)),
+                                  TextSp2(sanpham[index]['text'])
+                                ],
+                              ),
                             ],
                           )),
                     ),
 
-                );
-              });
+                  );
+                });
 
-        }
-        return Center(child: CircularProgressIndicator(),);
+          }
+          return Center(child: CircularProgressIndicator(),);
 
-      },),
+        },),
       floatingActionButton: FloatingActionButton(onPressed: () async{
         await Navigator.push(context, MaterialPageRoute(builder: (context) => SanPham(SanPhamMode.Adding,null)));
         setState(() {
